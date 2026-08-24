@@ -89,6 +89,17 @@ describe Protocol::Redis::Connection do
 			end.to raise_exception(Protocol::Redis::ServerError)
 		end
 		
+		it "does not close the connection after a server error" do
+			server.stream.write("-ERR unknown command\r\n")
+			server.stream.flush
+			
+			expect do
+				client.read_object
+			end.to raise_exception(Protocol::Redis::ServerError)
+			
+			expect(client.closed?).to be == false
+		end
+		
 		it "can handle unknown tokens" do
 			server.stream.write("<unknown\r\n")
 			server.stream.flush
@@ -96,6 +107,27 @@ describe Protocol::Redis::Connection do
 			expect do
 				client.read_object
 			end.to raise_exception(Protocol::Redis::UnknownTokenError)
+		end
+		
+		it "closes the connection on EOF" do
+			server.close
+			
+			expect do
+				client.read_object
+			end.to raise_exception(EOFError)
+			
+			expect(client.closed?).to be == true
+		end
+		
+		it "closes the connection on unknown token error" do
+			server.stream.write("<unknown\r\n")
+			server.stream.flush
+			
+			expect do
+				client.read_object
+			end.to raise_exception(Protocol::Redis::UnknownTokenError)
+			
+			expect(client.closed?).to be == true
 		end
 	end
 	

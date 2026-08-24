@@ -139,8 +139,11 @@ module Protocol
 					
 					raise UnknownTokenError, token.inspect
 				end
-				
-				# TODO: If an exception (e.g. Async::TimeoutError) propagates out of this function, perhaps @stream should be closed? Otherwise it might be in a weird state.
+			rescue ServerError
+				raise
+			rescue
+				close unless closed?
+				raise
 			end
 			
 			alias read_response read_object
