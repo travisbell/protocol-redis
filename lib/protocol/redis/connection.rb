@@ -139,11 +139,9 @@ module Protocol
 					
 					raise UnknownTokenError, token.inspect
 				end
-			rescue ServerError
-				raise
-			rescue
-				close unless closed?
-				raise
+				success = true
+			ensure
+				close unless success
 			end
 			
 			alias read_response read_object
