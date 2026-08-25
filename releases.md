@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Close connections when reading a response fails before it is fully consumed.
+
 ## v0.13.0
 
     - Handle `nil` return value in `hgetall` method.
