@@ -103,12 +103,13 @@ module Protocol
 			# @raises [ServerError] If the server returns an error response.
 			# @raises [EOFError] If the stream reaches end of file.
 			def read_object
+				# Whether the current response was fully consumed:
 				complete = false
-				
-				line = read_line or raise EOFError
-				
-				token = line.slice!(0, 1)
 				object = nil
+				
+				# The line that we are processing:
+				line = read_line or raise EOFError
+				token = line.slice!(0, 1)
 				
 				case token
 				when "$"
@@ -137,11 +138,9 @@ module Protocol
 				when "-"
 					complete = true
 					raise ServerError.new(line)
-					
 				when "+"
 					object = line
 					complete = true
-					
 				else
 					@stream.flush
 					
