@@ -108,34 +108,39 @@ module Protocol
 				line = read_line or raise EOFError
 				
 				token = line.slice!(0, 1)
+				object = nil
 				
-				object = case token
+				case token
 				when "$"
 					length = line.to_i
 					
 					if length == -1
-						nil
+						# No data.
 					else
-						read_data(length)
+						object = read_data(length)
 					end
+					
+					complete = true
 				when "*"
 					count = line.to_i
 					
-					# Null array (https://redis.io/topics/protocol#resp-arrays):
 					if count == -1
-						nil
+						# Null array (https://redis.io/topics/protocol#resp-arrays).
 					else
-						Array.new(count){read_object}
+						object = Array.new(count){read_object}
 					end
-				when ":"
-					line.to_i
 					
+					complete = true
+				when ":"
+					object = line.to_i
+					complete = true
 				when "-"
 					complete = true
 					raise ServerError.new(line)
 					
 				when "+"
-					line
+					object = line
+					complete = true
 					
 				else
 					@stream.flush
@@ -143,7 +148,6 @@ module Protocol
 					raise UnknownTokenError, token.inspect
 				end
 				
-				complete = true
 				return object
 			ensure
 				close unless complete
