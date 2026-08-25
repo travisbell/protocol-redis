@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2025, by Samuel Williams.
+# Copyright, 2019-2026, by Samuel Williams.
 
 require_relative "error"
 
@@ -122,7 +122,7 @@ module Protocol
 					# Null array (https://redis.io/topics/protocol#resp-arrays):
 					return nil if count == -1
 					
-					array = Array.new(count) {read_object}
+					array = Array.new(count){read_object}
 					
 					return array
 				when ":"

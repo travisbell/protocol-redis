@@ -16,6 +16,8 @@ Gem::Specification.new do |spec|
 	spec.homepage = "https://github.com/socketry/protocol-redis"
 	
 	spec.metadata = {
+		"bug_tracker_uri" => "https://github.com/socketry/protocol-redis/issues",
+		"changelog_uri" => "https://github.com/socketry/protocol-redis/blob/main/releases.md",
 		"documentation_uri" => "https://socketry.github.io/protocol-redis/",
 		"funding_uri" => "https://github.com/sponsors/ioquatix",
 		"source_code_uri" => "https://github.com/socketry/protocol-redis.git",
@@ -23,5 +25,5 @@ Gem::Specification.new do |spec|
 	
 	spec.files = Dir.glob(["{context,lib}/**/*", "*.md"], File::FNM_DOTMATCH, base: __dir__)
 	
-	spec.required_ruby_version = ">= 3.2"
+	spec.required_ruby_version = ">= 3.3"
 end

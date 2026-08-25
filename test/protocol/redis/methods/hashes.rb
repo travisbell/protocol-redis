@@ -2,7 +2,7 @@
 
 # Released under the MIT License.
 # Copyright, 2023, by Troex Nevelin.
-# Copyright, 2023-2025, by Samuel Williams.
+# Copyright, 2023-2026, by Samuel Williams.
 # Copyright, 2023, by Nick Burwell.
 
 require "protocol/redis/methods_context"
@@ -184,7 +184,7 @@ describe Protocol::Redis::Methods::Hashes do
 		it "can generate correct arguments with options" do
 			expect(object).to receive(:hscan).with(hash_name, "0", match: "test*", count: 10).and_return(["0", []])
 			
-			object.hscan_each(hash_name, "0", match: "test*", count: 10) {}
+			object.hscan_each(hash_name, "0", match: "test*", count: 10){}
 		end
 	end
 end

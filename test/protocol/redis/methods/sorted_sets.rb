@@ -2,7 +2,7 @@
 
 # Released under the MIT License.
 # Copyright, 2020, by Dimitry Chopey.
-# Copyright, 2020-2025, by Samuel Williams.
+# Copyright, 2020-2026, by Samuel Williams.
 
 require "protocol/redis/methods_context"
 require "protocol/redis/methods/sorted_sets"
@@ -123,7 +123,7 @@ describe Protocol::Redis::Methods::SortedSets do
 		
 		it "raises error when weights size doesn't match keys size" do
 			weights = [2]
-			expect {object.zinterstore(dest_set, [set_name, set_name2], weights)}.to raise_exception(ArgumentError, message: be =~ /weights given/)
+			expect{object.zinterstore(dest_set, [set_name, set_name2], weights)}.to raise_exception(ArgumentError, message: be =~ /weights given/)
 		end
 	end
 	

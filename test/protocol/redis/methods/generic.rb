@@ -2,7 +2,7 @@
 
 # Released under the MIT License.
 # Copyright, 2021, by Troex Nevelin.
-# Copyright, 2023-2025, by Samuel Williams.
+# Copyright, 2023-2026, by Samuel Williams.
 
 require "protocol/redis/methods_context"
 require "protocol/redis/methods/generic"
@@ -135,7 +135,7 @@ describe Protocol::Redis::Methods::Generic do
 		end
 		
 		it "raises error when no keys provided" do
-			expect {object.migrate(host, port, destination, keys: [])}.to raise_exception(ArgumentError, message: be =~ /Must provide keys/)
+			expect{object.migrate(host, port, destination, keys: [])}.to raise_exception(ArgumentError, message: be =~ /Must provide keys/)
 		end
 	end
 	

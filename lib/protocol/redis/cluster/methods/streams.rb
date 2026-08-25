@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2025, by Samuel Williams.
+# Copyright, 2025-2026, by Samuel Williams.
 
 module Protocol
 	module Redis
@@ -128,12 +128,12 @@ module Protocol
 					def xgroup(*arguments, role: :master)
 						# Extract stream key (usually third argument for CREATE, second for others):
 						stream_key = case arguments[0]&.upcase
-																			when "CREATE", "SETID"
-																				arguments[1] # CREATE stream group id, SETID stream group id
-																			when "DESTROY", "DELCONSUMER"
-																				arguments[1] # DESTROY stream group, DELCONSUMER stream group consumer
-																			else
-																				arguments[1] if arguments.length > 1
+						when "CREATE", "SETID"
+							arguments[1] # CREATE stream group id, SETID stream group id
+						when "DESTROY", "DELCONSUMER"
+							arguments[1] # DESTROY stream group, DELCONSUMER stream group consumer
+						else
+							arguments[1] if arguments.length > 1
 						end
 						
 						if stream_key
