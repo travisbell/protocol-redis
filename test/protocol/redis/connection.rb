@@ -73,11 +73,19 @@ describe Protocol::Redis::Connection do
 			expect(client.read_object).to be == nil
 		end
 		
+		it "can read null arrays" do
+			server.stream.write("*-1\r\n")
+			server.stream.flush
+			
+			expect(client.read_object).to be == nil
+		end
+		
 		it "can read status replies" do
 			server.stream.write("+OK\r\n")
 			server.stream.flush
 			
 			expect(client.read_object).to be == "OK"
+			expect(client.closed?).to be == false
 		end
 		
 		it "can handle server errors" do
@@ -89,15 +97,26 @@ describe Protocol::Redis::Connection do
 			end.to raise_exception(Protocol::Redis::ServerError)
 		end
 		
-		it "does not close the connection after a server error" do
-			server.stream.write("-ERR unknown command\r\n")
+		it "can continue reading after a server error" do
+			server.stream.write("-ERR unknown command\r\n+OK\r\n")
 			server.stream.flush
 			
 			expect do
 				client.read_object
 			end.to raise_exception(Protocol::Redis::ServerError)
 			
-			expect(client.closed?).to be == false
+			expect(client.read_object).to be == "OK"
+		end
+		
+		it "closes the connection when a server error interrupts an array" do
+			server.stream.write("*2\r\n-ERR unknown command\r\n+OK\r\n")
+			server.stream.flush
+			
+			expect do
+				client.read_object
+			end.to raise_exception(Protocol::Redis::ServerError)
+			
+			expect(client.closed?).to be == true
 		end
 		
 		it "can handle unknown tokens" do

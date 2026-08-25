@@ -103,45 +103,50 @@ module Protocol
 			# @raises [ServerError] If the server returns an error response.
 			# @raises [EOFError] If the stream reaches end of file.
 			def read_object
+				complete = false
+				
 				line = read_line or raise EOFError
 				
 				token = line.slice!(0, 1)
 				
-				case token
+				object = case token
 				when "$"
 					length = line.to_i
 					
 					if length == -1
-						return nil
+						nil
 					else
-						return read_data(length)
+						read_data(length)
 					end
 				when "*"
 					count = line.to_i
 					
 					# Null array (https://redis.io/topics/protocol#resp-arrays):
-					return nil if count == -1
-					
-					array = Array.new(count){read_object}
-					
-					return array
+					if count == -1
+						nil
+					else
+						Array.new(count){read_object}
+					end
 				when ":"
-					return line.to_i
+					line.to_i
 					
 				when "-"
+					complete = true
 					raise ServerError.new(line)
 					
 				when "+"
-					return line
+					line
 					
 				else
 					@stream.flush
 					
 					raise UnknownTokenError, token.inspect
 				end
-				success = true
+				
+				complete = true
+				return object
 			ensure
-				close unless success
+				close unless complete
 			end
 			
 			alias read_response read_object
